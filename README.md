@@ -6,6 +6,18 @@
 
 Whether you are a **SOC Analyst** looking to "proof" your detections or a **Cybersecurity Student** hungry for raw log analysis, ATT&CK-ARENA provides the infrastructure to see the battle from both sides.
 
+## Why This Lab Exists
+
+Most Purple Team labs focus on *executing* attacks. ATT&CK-ARENA focuses on *validating detections*.
+
+The key question this lab answers: **"How do I know my SIEM rules actually work before deploying them to production?"**
+
+By testing detection logic against controlled adversary behaviors in a safe environment, you can:
+- Reduce false positives before they overwhelm your SOC
+- Identify coverage gaps in your monitoring stack
+- Build institutional knowledge of attack patterns
+- Develop muscle memory for incident triage
+
 ## The Combatants
 
 The arena mimics a modern enterprise environment through a hybrid VM/Container architecture:
@@ -36,6 +48,39 @@ To replicate this environment, I recommend the following "Gold Image" setup:
 
 > **Note:** Detailed configuration scripts for each combatant can be found in the `infrastructure/` directory.
 
+## Quick Start (in Development)
+
+### Infrastructure Setup
+
+In the Docker host, run this script to setup the Sentinel:
+
+```sh
+curl -sSL datorum.net/aa/setup-sentinel | bash
+```
+
+In the Windows Server machine, run this script to setup the Champion:
+
+```pwsh
+irm https://datorum.net/aa-setup-champion/ | iex
+```
+
+In the Windows machine, run this script to setup the Gladiator:
+
+```pwsh
+irm https://datorum.net/aa-setup-gladiator/ | iex
+```
+
+### Testing
+
+Verify that Kibana started capturing logs:
+
+1. In the Linux host, go to `http://localhost:5601`.
+2. Go to **Stack Management > Index Management**.
+3. Check if `arena-logs-[today's-date]` exists.
+4. If it exists, go to **Discover** and make sure your Data View (Index Pattern) is set to `arena-logs-*`.
+
+Notes about tests will be added as soon as they're available.
+
 ## Current Status
 
 🟢 **Operational:**
@@ -54,6 +99,12 @@ To replicate this environment, I recommend the following "Gold Image" setup:
 - Automated attack orchestration
 - Custom Kibana dashboards for each tactic
 
+## Disclaimer
+
+⚠️ **This lab is for authorized security testing and educational purposes only.**
+
+Do not use techniques demonstrated here against systems you don't own or have explicit permission to test. Unauthorized access to computer systems is illegal.
+
 ## Licensing
 
-This project is licensed under the **MIT License** - see the [LICENSE](https://www.google.com/search?q=LICENSE) file for details. Essentially, you are free to use, modify, and distribute this lab as long as you provide attribution.
+This project is licensed under the **MIT License**. You are free to use, modify, and distribute this lab as long as you provide attribution.
