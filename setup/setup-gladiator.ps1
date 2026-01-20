@@ -1,7 +1,10 @@
-# ATT&CK-ARENA: Gladiator Deployment Script
+# ATT&CK-ARENA: Gladiator Deployment Orchestrator
 # ---------------------------------------------------------
+$RAW_BASE = "https://raw.githubusercontent.com/arjfabian/attack-arena/refs/heads/main/setup/configs"
+$ToolsDir = "C:\Arena-Tools"
+
 Clear-Host
-Write-Host "WELCOME TO THE ATT&CK-ARENA" -ForegroundColor Cyan
+Write-Host "⚔️  WELCOME TO THE ATT&CK-ARENA: GLADIATOR" -ForegroundColor Cyan
 Write-Host "WARNING: This script will modify system settings and RESTART the machine." -ForegroundColor Yellow
 Write-Host "---------------------------------------------------------"
 
@@ -35,38 +38,32 @@ auditpol /set /subcategory:"Process Creation" /success:enable /failure:enable
 reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Policies\System\Audit" /v ProcessCreationIncludeCmdLine_Output /t REG_DWORD /d 1 /f
 
 # 4. Sysmon Installation
-$ToolsDir = "C:\Arena-Tools"
 if (!(Test-Path $ToolsDir)) { New-Item $ToolsDir -ItemType Directory }
-Write-Host "[*] Installing Sysmon with Olaf Hartong's Config..." -ForegroundColor Gray
+Write-Host "[*] Downloading Sysmon and Arena custom config..." -ForegroundColor Gray
 Invoke-WebRequest -Uri "https://download.sysinternals.com/files/Sysmon.zip" -OutFile "$ToolsDir\Sysmon.zip"
 Expand-Archive "$ToolsDir\Sysmon.zip" -DestinationPath "$ToolsDir\Sysmon" -Force
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/olafhartong/sysmon-modular/master/sysmonconfig.xml" -OutFile "$ToolsDir\Sysmon\sysmonconfig.xml"
+
+# FETCH CONFIG FROM YOUR REPO
+Invoke-WebRequest -Uri "$RAW_BASE/sysmonconfig.xml" -OutFile "$ToolsDir\Sysmon\sysmonconfig.xml"
 Start-Process "$ToolsDir\Sysmon\Sysmon64.exe" -ArgumentList "-i $ToolsDir\Sysmon\sysmonconfig.xml -accepteula" -Wait
 
 # 5. Winlogbeat Deployment
-Write-Host "[*] Deploying Winlogbeat..." -ForegroundColor Gray
+Write-Host "[*] Deploying Winlogbeat with remote assets..." -ForegroundColor Gray
 $WLB_URL = "https://artifacts.elastic.co/downloads/beats/winlogbeat/winlogbeat-8.12.0-windows-x86_64.zip"
 Invoke-WebRequest -Uri $WLB_URL -OutFile "$ToolsDir\Winlogbeat.zip"
 Expand-Archive "$ToolsDir\Winlogbeat.zip" -DestinationPath "$ToolsDir" -Force
-# Handling the versioned folder name
 $ExtractedFolder = Get-ChildItem -Path $ToolsDir -Filter "winlogbeat-*" -Directory | Select-Object -First 1
 Move-Item $ExtractedFolder.FullName "$ToolsDir\Winlogbeat" -Force
 
-# Create YAML (Sentinel is usually at .100 in our setup)
+# Create YAML from Template (Sentinel default is usually .100)
 $SuggestedSentinel = $TargetIP.Substring(0, $TargetIP.LastIndexOf('.')) + ".100"
 $SentinelIP = Read-Host "Enter Sentinel (ELK) IP Address [Default: $SuggestedSentinel]"
 if ([string]::IsNullOrWhiteSpace($SentinelIP)) { $SentinelIP = $SuggestedSentinel }
 
-$Yaml = @"
-winlogbeat.event_logs:
-  - name: Security
-  - name: Microsoft-Windows-Sysmon/Operational
-  - name: Microsoft-Windows-PowerShell/Operational
-    event_id: 4104
-output.logstash:
-  hosts: ["$SentinelIP:5044"]
-"@
-$Yaml | Out-File "$ToolsDir\Winlogbeat\winlogbeat.yml" -Encoding ascii
+# FETCH YAML TEMPLATE FROM YOUR REPO AND INJECT IP
+Invoke-WebRequest -Uri "$RAW_BASE/winlogbeat.yml" -OutFile "$ToolsDir\Winlogbeat\winlogbeat.yml"
+(Get-Content "$ToolsDir\Winlogbeat\winlogbeat.yml") -replace "<SENTINEL_IP>", $SentinelIP | Set-Content "$ToolsDir\Winlogbeat\winlogbeat.yml"
+
 Set-Location "$ToolsDir\Winlogbeat"
 .\install-service-winlogbeat.ps1
 Start-Service winlogbeat
@@ -86,6 +83,6 @@ Write-Host "[!] Ready to join $Domain. You will be prompted for credentials." -F
 $Credential = Get-Credential -UserName "Administrator" -Message "Enter Domain Admin Password"
 Add-Computer -NewName $NewName -DomainName $Domain -Credential $Credential -Force
 
-Write-Host "ALL SYSTEMS READY. Restarting in 10 seconds..." -ForegroundColor Yellow
+Write-Host "⚔️  ALL SYSTEMS READY. Restarting in 10 seconds..." -ForegroundColor Yellow
 Start-Sleep -Seconds 10
 Restart-Computer
