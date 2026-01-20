@@ -4,11 +4,11 @@
 
 **ATT&CK-ARENA** is a high-fidelity Purple Team playground designed to bridge the gap between "running an attack" and "building a defense." By simulating real-world adversary behaviors via **Atomic Red Team** and capturing deep telemetry through a dockerized **ELK Stack**, this lab provides a safe, reproducible environment to validate SIEM rules before they hit production.
 
-Whether you are a **SOC Analyst** looking to "proof" your detections or a **Cybersecurity Student** hungry for raw log analysis, ATT&CK-ARENA provides the infrastructure to see the battle from both sides.
+Whether you are a **SOC Analyst** or a **Cybersecurity Student**, ATT&CK-ARENA provides the infrastructure to see the battle from both sides, with exposure to production-style telemetry.
 
 ## Why This Lab Exists
 
-Most Purple Team labs focus on *executing* attacks. ATT&CK-ARENA focuses on *validating detections*.
+Most Purple Team labs focus on *executing* attacks. ATT&CK-ARENA focuses on *validating detections*, without the shift to a red team framework or a full SOC platform.
 
 The key question this lab answers: **"How do I know my SIEM rules actually work before deploying them to production?"**
 
@@ -18,7 +18,7 @@ By testing detection logic against controlled adversary behaviors in a safe envi
 - Build institutional knowledge of attack patterns
 - Develop muscle memory for incident triage
 
-ATT&CK-ARENA features an aggressive Signal-To-Noise curation via specific Logstash tweaks, to reduce 90% of the noise before the logs ever leave the machines (**Champion** or **Gladiator**), while still capturing Atomic Red Team simulations. In a real-world setting, similar tweaks translate to 90% of reduction in storage requirements and analyst distraction.
+ATT&CK-ARENA features an aggressive Signal-To-Noise curation via specific Logstash tweaks, to reduce ~90% of the noise before the logs ever leave the endpoints (**Champion** or **Gladiator**), while still capturing Atomic Red Team simulations. In real-world environments, similar filtering strategies can significantly reduce storage requirements and analyst distraction.
 
 ## The Combatants
 
@@ -48,9 +48,23 @@ To replicate the stable environment used in developing this project, I recommend
 | **Shipper** | Winlogbeat v8.12.0 |
 | **Stack** | ELK Stack (Dockerized) |
 
+Please note that the architecture is actually **hardware-agnostic** so it can be deployed either on virtual machines (for a portable lab environment) or on physical hosts (enabling realistic endpoint behavior, timing characteristics, or team roleplay).
+
 ## Quick Start (in Development)
 
 ### Infrastructure Setup
+
+The setup scripts, contained in the `setup/` folder, act as "one-liners" to deploy the necessary infrastructure to the **Sentinel**, the **Champion** and the **Gladiator**.
+
+1. In the **Linux** host, run `setup/setup-sentinel.sh` to enroll the **Sentinel**. The host can also serve as the **Challenger** to test the techniques.
+2. In the **Windows Server** host, run `setup/setup-champion.ps1` to enroll the **Champion**.
+3. In the **Windows** host, run `setup/setup-gladiator.ps1` to enroll the **Gladiator**.
+
+Phase 2 will include one-line commands to automate this step.
+
+<!--
+
+FOR PHASE 2:
 
 In the Docker host, run this script to setup the Sentinel:
 
@@ -69,6 +83,7 @@ In the Windows machine, run this script to setup the Gladiator:
 ```pwsh
 irm https://datorum.net/aa-setup-gladiator/ | iex
 ```
+-->
 
 ### Testing
 
@@ -81,23 +96,13 @@ Verify that Kibana started capturing logs:
 
 Notes about tests will be added as soon as they're available.
 
-## Current Status
+## Project Lifecycle
 
-🟢 **Operational:**
-- ELK Stack deployment (Elasticsearch 8.12, Logstash, Kibana)
-- Active Directory environment (Champion as DC)
-- Sysmon + Winlogbeat telemetry pipeline
-- Network connectivity between all combatants
+ATT&CK-ARENA is being actively developed in iterative phases:
 
-🟡 **In Progress:**
-- Implementing MITRE ATT&CK techniques (Discovery, Persistence phases)
-- Building detection rules library
-- Documenting simulation reports
-
-🔴 **Planned:**
-- Full Atomic Red Team integration
-- Automated attack orchestration
-- Custom Kibana dashboards for each tactic
+🟢 **Phase 1 (Completed):** Telemetry pipeline, infrastructure, and baseline filtering
+🟡 **Phase 2 (In Progress):** Controlled simulation of selected MITRE ATT&CK techniques with documented detections
+⚪ **Phase 3 (Planned):** Detection regression, logic updates, and software version drift handling (potentially automated).
 
 ## Disclaimer
 
