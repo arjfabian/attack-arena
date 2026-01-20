@@ -18,6 +18,8 @@ By testing detection logic against controlled adversary behaviors in a safe envi
 - Build institutional knowledge of attack patterns
 - Develop muscle memory for incident triage
 
+ATT&CK-ARENA features an aggressive Signal-To-Noise curation via specific Logstash tweaks, to reduce 90% of the noise before the logs ever leave the machines (**Champion** or **Gladiator**), while still capturing Atomic Red Team simulations. In a real-world setting, similar tweaks translate to 90% of reduction in storage requirements and analyst distraction.
+
 ## The Combatants
 
 The arena mimics a modern enterprise environment through a hybrid VM/Container architecture:
@@ -36,7 +38,7 @@ The arena mimics a modern enterprise environment through a hybrid VM/Container a
 
 ## Lab Specifications
 
-To replicate this environment, I recommend the following "Gold Image" setup:
+To replicate the stable environment used in developing this project, I recommend the following "Gold Image" setup:
 
 | Component | Software / Version |
 | --- | --- |
@@ -45,8 +47,6 @@ To replicate this environment, I recommend the following "Gold Image" setup:
 | **Telemetry** | Sysmon v15.15 (with modular configuration) |
 | **Shipper** | Winlogbeat v8.12.0 |
 | **Stack** | ELK Stack (Dockerized) |
-
-> **Note:** Detailed configuration scripts for each combatant can be found in the `infrastructure/` directory.
 
 ## Quick Start (in Development)
 
