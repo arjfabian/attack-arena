@@ -1,14 +1,14 @@
-# ⚔️ ATT&CK-ARENA
+# ⚔️ ATT&CK-FORGE
 
 ## Introduction
 
-**ATT&CK-ARENA** is a high-fidelity Purple Team playground designed to bridge the gap between "running an attack" and "building a defense." By simulating real-world adversary behaviors via **Atomic Red Team** and capturing deep telemetry through a dockerized **ELK Stack**, this lab provides a safe, reproducible environment to validate SIEM rules before they hit production.
+**ATT&CK-FORGE** is a high-fidelity Purple Team playground designed to bridge the gap between "running an attack" and "building a defense." By simulating real-world adversary behaviors via **Atomic Red Team** and capturing deep telemetry through a dockerized **ELK Stack**, this lab provides a safe, reproducible environment to validate SIEM rules before they hit production.
 
-Whether you are a **SOC Analyst** or a **Cybersecurity Student**, ATT&CK-ARENA provides the infrastructure to see the battle from both sides, with exposure to production-style telemetry.
+Whether you are a **SOC Analyst** or a **Cybersecurity Student**, ATT&CK-FORGE provides the infrastructure to see the battle from both sides, with exposure to production-style telemetry.
 
 ## Why This Lab Exists
 
-Most Purple Team labs focus on *executing* attacks. ATT&CK-ARENA focuses on *validating detections*, without the shift to a red team framework or a full SOC platform.
+Most Purple Team labs focus on *executing* attacks. ATT&CK-FORGE focuses on *validating detections*, without the shift to a red team framework or a full SOC platform.
 
 The key question this lab answers: **"How do I know my SIEM rules actually work before deploying them to production?"**
 
@@ -18,11 +18,11 @@ By testing detection logic against controlled adversary behaviors in a safe envi
 - Build institutional knowledge of attack patterns
 - Develop muscle memory for incident triage
 
-ATT&CK-ARENA features an aggressive Signal-To-Noise curation via specific Logstash tweaks, to reduce ~90% of the noise before the logs ever leave the endpoints (**Champion** or **Gladiator**), while still capturing Atomic Red Team simulations. In real-world environments, similar filtering strategies can significantly reduce storage requirements and analyst distraction.
+ATT&CK-FORGE features an aggressive Signal-To-Noise curation via specific Logstash tweaks, to reduce ~90% of the noise before the logs ever leave the endpoints (**Champion** or **Gladiator**), while still capturing Atomic Red Team simulations. In real-world environments, similar filtering strategies can significantly reduce storage requirements and analyst distraction.
 
 ## The Combatants
 
-The arena mimics a modern enterprise environment through a hybrid VM/Container architecture:
+The Forge mimics a modern enterprise environment through a hybrid VM/Container architecture:
 
 * **🛡️ Gladiator (Workstation):** A Windows 10 endpoint—the primary target for client-side attacks.
 * **🏰 Champion (Server):** A Windows Server 2022 Domain Controller—the "Crown Jewel" of the domain.
@@ -56,20 +56,10 @@ Please note that the architecture is actually **hardware-agnostic** so it can be
 
 The setup scripts, contained in the `setup/` folder, act as "one-liners" to deploy the necessary infrastructure to the **Sentinel**, the **Champion** and the **Gladiator**.
 
-1. In the **Linux** host, run `setup/setup-sentinel.sh` to enroll the **Sentinel**. The host can also serve as the **Challenger** to test the techniques.
-2. In the **Windows Server** host, run `setup/setup-champion.ps1` to enroll the **Champion**.
-3. In the **Windows** host, run `setup/setup-gladiator.ps1` to enroll the **Gladiator**.
-
-Phase 2 will include one-line commands to automate this step.
-
-<!--
-
-FOR PHASE 2:
-
 In the Docker host, run this script to setup the Sentinel:
 
 ```sh
-curl -sSL datorum.net/aa/setup-sentinel | bash
+curl -sSL datorum.net/af-setup-sentinel/ | bash
 ```
 
 In the Windows Server machine, run this script to setup the Champion:
@@ -83,7 +73,6 @@ In the Windows machine, run this script to setup the Gladiator:
 ```pwsh
 irm https://datorum.net/aa-setup-gladiator/ | iex
 ```
--->
 
 ### Testing
 
@@ -91,14 +80,14 @@ Verify that Kibana started capturing logs:
 
 1. In the Linux host, go to `http://localhost:5601`.
 2. Go to **Stack Management > Index Management**.
-3. Check if `arena-logs-[today's-date]` exists.
-4. If it exists, go to **Discover** and make sure your Data View (Index Pattern) is set to `arena-logs-*`.
+3. Check if `forge-logs-[today's-date]` exists.
+4. If it exists, go to **Discover** and make sure your Data View (Index Pattern) is set to `forge-logs-*`.
 
 Notes about tests will be added as soon as they're available.
 
 ## Project Lifecycle
 
-ATT&CK-ARENA is being actively developed in iterative phases:
+ATT&CK-FORGE is being actively developed in iterative phases:
 
 🟢 **Phase 1 (Completed):** Telemetry pipeline, infrastructure, and baseline filtering
 🟡 **Phase 2 (In Progress):** Controlled simulation of selected MITRE ATT&CK techniques with documented detections

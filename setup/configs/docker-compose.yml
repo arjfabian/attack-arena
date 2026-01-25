@@ -1,11 +1,11 @@
 services:
 
   # The Brain: Elasticsearch
-  aa-elasticsearch:
+  af-elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
-    container_name: aa-elasticsearch
+    container_name: af-elasticsearch
     environment:
-      - node.name=aa-elasticsearch
+      - node.name=af-elasticsearch
       - discovery.type=single-node
       - xpack.security.enabled=false # Set to true later for production hardening
       - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
@@ -14,36 +14,36 @@ services:
     ports:
       - "9200:9200"
     networks:
-      - arena-net
+      - forge-net
 
   # The Collector: Logstash
-  aa-logstash:
+  af-logstash:
     image: docker.elastic.co/logstash/logstash:8.12.0
-    container_name: aa-logstash
+    container_name: af-logstash
     volumes:
       - ./logstash/pipeline:/usr/share/logstash/pipeline
     ports:
       - "5044:5044"
     depends_on:
-      - aa-elasticsearch
+      - af-elasticsearch
     networks:
-      - arena-net
+      - forge-net
 
   # The Face: Kibana
-  aa-kibana:
+  af-kibana:
     image: docker.elastic.co/kibana/kibana:8.12.0
-    container_name: aa-kibana
+    container_name: af-kibana
     environment:
-      - ELASTICSEARCH_HOSTS=http://aa-elasticsearch:9200
+      - ELASTICSEARCH_HOSTS=http://af-elasticsearch:9200
     ports:
       - "5601:5601"
     depends_on:
-      - aa-elasticsearch
+      - af-elasticsearch
     networks:
-      - arena-net
+      - forge-net
 
 networks:
-  arena-net:
+  forge-net:
     driver: bridge
 
 volumes:

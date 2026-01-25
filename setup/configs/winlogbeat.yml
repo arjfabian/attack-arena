@@ -5,7 +5,7 @@ winlogbeat.event_logs:
     event_id: 4104 # Captures Script Blocks
 
 output.logstash:
-  hosts: ["YOUR_DEBIAN_IP:5044"]
+  hosts: ["<SENTINEL-IP>:5044"]
 
 logging.level: info
 logging.to_files: true

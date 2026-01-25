@@ -1,10 +1,10 @@
-# ATT&CK-ARENA: Gladiator Deployment Orchestrator
+# ATT&CK-FORGE: Gladiator Deployment Orchestrator
 # ---------------------------------------------------------
-$RAW_BASE = "https://raw.githubusercontent.com/arjfabian/attack-arena/refs/heads/main/setup/configs"
-$ToolsDir = "C:\Arena-Tools"
+$RAW_BASE = "https://raw.githubusercontent.com/datorumnet/attackforge/refs/heads/main/setup/configs"
+$ToolsDir = "C:\Forge-Tools"
 
 Clear-Host
-Write-Host "⚔️  WELCOME TO THE ATT&CK-ARENA: GLADIATOR" -ForegroundColor Cyan
+Write-Host "WELCOME TO THE ATT&CK-FORGE: GLADIATOR" -ForegroundColor Cyan
 Write-Host "WARNING: This script will modify system settings and RESTART the machine." -ForegroundColor Yellow
 Write-Host "---------------------------------------------------------"
 
@@ -32,14 +32,14 @@ Set-DnsClientServerAddress -InterfaceIndex $Interface.InterfaceIndex -ServerAddr
 
 # 3. Security Hardening (Firewall, Registry, AuditPol)
 Write-Host "[*] Configuring Firewall, Registry, and Audit Policies..." -ForegroundColor Gray
-netsh advfirewall firewall add rule name="ARENA-Allow-ICMPv4-In" protocol=icmpv4:8,any dir=in action=allow
+netsh advfirewall firewall add rule name="FORGE-Allow-ICMPv4-In" protocol=icmpv4:8,any dir=in action=allow
 Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Lsa" -Name "SCENoApplyLegacyAuditPolicy" -Value 1
 auditpol /set /subcategory:"Process Creation" /success:enable /failure:enable
 reg add "HKLM\Software\Microsoft\Windows\CurrentVersion\Policies\System\Audit" /v ProcessCreationIncludeCmdLine_Output /t REG_DWORD /d 1 /f
 
 # 4. Sysmon Installation
 if (!(Test-Path $ToolsDir)) { New-Item $ToolsDir -ItemType Directory }
-Write-Host "[*] Downloading Sysmon and Arena custom config..." -ForegroundColor Gray
+Write-Host "[*] Downloading Sysmon and Forge custom config..." -ForegroundColor Gray
 Invoke-WebRequest -Uri "https://download.sysinternals.com/files/Sysmon.zip" -OutFile "$ToolsDir\Sysmon.zip"
 Expand-Archive "$ToolsDir\Sysmon.zip" -DestinationPath "$ToolsDir\Sysmon" -Force
 
@@ -76,8 +76,8 @@ if (Test-Connection -ComputerName $ChampionIP -Count 1 -Quiet) { Write-Host ">> 
 # 7. Identity & Restart
 $NewName = Read-Host "Enter New Hostname [Default: Gladiator]"
 if ([string]::IsNullOrWhiteSpace($NewName)) { $NewName = "Gladiator" }
-$Domain = Read-Host "Enter Domain to join [Default: arena.local]"
-if ([string]::IsNullOrWhiteSpace($Domain)) { $Domain = "arena.local" }
+$Domain = Read-Host "Enter Domain to join [Default: forge.local]"
+if ([string]::IsNullOrWhiteSpace($Domain)) { $Domain = "forge.local" }
 
 Write-Host "[!] Ready to join $Domain. You will be prompted for credentials." -ForegroundColor Cyan
 $Credential = Get-Credential -UserName "Administrator" -Message "Enter Domain Admin Password"

@@ -1,7 +1,7 @@
 #!/bin/bash
-# ATT&CK-ARENA: Sentinel Deployment Orchestrator
+# ATT&CK-FORGE: Sentinel Deployment Orchestrator
 # ---------------------------------------------------------
-RAW_BASE="https://raw.githubusercontent.com/arjfabian/attack-arena/refs/heads/main/setup/configs"
+RAW_BASE="https://raw.githubusercontent.com/datorum/attackforge/refs/heads/main/setup/configs"
 
 echo -e "\e[36mSENTINEL ORCHESTRATOR\e[0m"
 

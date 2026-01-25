@@ -1,8 +1,8 @@
-# ATT&CK-ARENA: Champion (Domain Controller) Deployment Orchestrator
+# ATT&CK-FORGE: Champion (Domain Controller) Deployment Orchestrator
 # ---------------------------------------------------------
-$ArenaDomain = "arena.local"
-$ToolsDir    = "C:\Arena-Tools"
-$RAW_BASE    = "https://raw.githubusercontent.com/arjfabian/attack-arena/refs/heads/main/setup/configs"
+$ForgeDomain = "forge.local"
+$ToolsDir    = "C:\Forge-Tools"
+$RAW_BASE    = "https://raw.githubusercontent.com/datorumnet/attackforge/refs/heads/main/setup/configs"
 
 # 1. Admin Check
 if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
@@ -29,15 +29,15 @@ if (-not $IsDC) {
     Set-DnsClientServerAddress -InterfaceIndex $Interface.InterfaceIndex -ServerAddresses "127.0.0.1"
 
     Write-Host "[*] Installing AD DS Role & Renaming..." -ForegroundColor Gray
-    Rename-Computer -NewName "aa-champion" -Force -ErrorAction SilentlyContinue
+    Rename-Computer -NewName "af-champion" -Force -ErrorAction SilentlyContinue
     Install-WindowsFeature -Name AD-Domain-Services -IncludeManagementTools
 
     Write-Host "[!] PROMOTING TO DC. You will be prompted for a DSRM Password." -ForegroundColor Yellow
     $DSRMPass = Read-Host "Enter DSRM Password" -AsSecureString
     
     Install-ADDSForest `
-        -DomainName $ArenaDomain `
-        -DomainNetbiosName "ARENA" `
+        -DomainName $ForgeDomain `
+        -DomainNetbiosName "FORGE" `
         -SafeModeAdministratorPassword $DSRMPass `
         -InstallDns -Force
 } 
@@ -56,7 +56,7 @@ else {
 
     # 2. Sysmon
     if (!(Test-Path $ToolsDir)) { New-Item $ToolsDir -ItemType Directory }
-    Write-Host "[*] Downloading Sysmon and custom Arena config..." -ForegroundColor Gray
+    Write-Host "[*] Downloading Sysmon and custom Forge config..." -ForegroundColor Gray
     Invoke-WebRequest -Uri "https://download.sysinternals.com/files/Sysmon.zip" -OutFile "$ToolsDir\Sysmon.zip"
     Expand-Archive "$ToolsDir\Sysmon.zip" -DestinationPath "$ToolsDir\Sysmon" -Force
     
